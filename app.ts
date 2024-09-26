@@ -17,6 +17,7 @@ app.use(
 	morgan(':method :url :status :res[content-length] - :response-time ms :body')
 );
 app.use('/api/products', productsRouter);
+app.use('/api/users', productsRouter);
 
 app.get('/', (req: any, res: { sendStatus: (arg0: number) => void }) => {
 	res.sendStatus(200);
