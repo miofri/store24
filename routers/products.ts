@@ -14,16 +14,66 @@ interface Product {
 	section: String;
 	images: String[];
 }
-productsRouter.get(
-	'/',
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const query = await pool.query(queries.selectProducts);
-			res.json(query.rows);
-		} catch (error) {
-			next(error);
-		}
+interface ProductId extends Product {
+	id: string;
+}
+
+productsRouter.get('/', async (req, res, next) => {
+	try {
+		const query = await pool.query(queries.selectProducts);
+		res.status(200).json(query.rows);
+	} catch (error) {
+		next(error);
 	}
-);
+});
+
+productsRouter.post('/', async (req, res, next) => {
+	try {
+		const newProd: Product = req.body;
+		const query = await pool.query(queries.addNewProduct, [
+			newProd.sku,
+			newProd.name,
+			newProd.category,
+			newProd.price,
+			newProd.inventory,
+			newProd.description,
+			newProd.section,
+			newProd.images,
+		]);
+		res.status(201).json(query.rows[0]);
+	} catch (error) {
+		next(error);
+	}
+});
+
+productsRouter.patch('/', async (req, res, next) => {
+	try {
+		const patchProd: ProductId = req.body;
+		const query = await pool.query(queries.patchProduct, [
+			patchProd.sku,
+			patchProd.name,
+			patchProd.category,
+			patchProd.price,
+			patchProd.inventory,
+			patchProd.description,
+			patchProd.section,
+			patchProd.images,
+			patchProd.id,
+		]);
+		res.status(200).json(query.rows[0]);
+	} catch (error) {
+		next(error);
+	}
+});
+
+productsRouter.delete('/:todelete', async (req, res, next) => {
+	try {
+		const productToDelete: string = req.params.todelete;
+		const query = await pool.query(queries.deleteProduct, [productToDelete]);
+		res.sendStatus(204);
+	} catch (error) {
+		next(error);
+	}
+});
 
 export default productsRouter;
