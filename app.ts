@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import productsRouter from './routers/products.ts';
 //const path = require('path');
 import dotenv from 'dotenv';
+import usersRouter from './routers/users.ts';
 
 dotenv.config();
 morgan.token('body', (req: Request) => {
@@ -17,7 +18,7 @@ app.use(
 	morgan(':method :url :status :res[content-length] - :response-time ms :body')
 );
 app.use('/api/products', productsRouter);
-app.use('/api/users', productsRouter);
+app.use('/api/users', usersRouter);
 
 app.get('/', (req: any, res: { sendStatus: (arg0: number) => void }) => {
 	res.sendStatus(200);
