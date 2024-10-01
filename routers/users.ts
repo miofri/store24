@@ -56,6 +56,13 @@ usersRouter.post('/signup', async (req, res, next) => {
 		saltRounds
 	);
 	try {
+		const emailCheckQuery = await pool.query(
+			'SELECT * FROM users WHERE email = $1',
+			[newUser.email]
+		);
+		if (emailCheckQuery.rows.length > 0) {
+			return res.status(400).json({ error: 'Email is already in use' });
+		}
 		const query = await pool.query(
 			'INSERT INTO users (first_name, last_name, email, password, home_address, postcode, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
 			[

@@ -27,6 +27,22 @@ productsRouter.get('/', async (req, res, next) => {
 	}
 });
 
+productsRouter.get('/search', async (req, res, next) => {
+	try {
+		const term = req.query.q as String;
+		if (!term) {
+			return res.status(400).json({ message: 'Search term is required' });
+		}
+		const query = await pool.query(
+			"SELECT * FROM products WHERE sku = $1 OR name ILIKE '%' || $2 || '%'",
+			[term, term]
+		);
+		res.status(200).json(query.rows);
+	} catch (error) {
+		next(error);
+	}
+});
+
 // all route below will be a protected route later
 
 productsRouter.post('/', async (req, res, next) => {
