@@ -44,7 +44,6 @@ productsRouter.get('/search', async (req, res, next) => {
 });
 
 // all route below will be a protected route later
-
 productsRouter.post('/', async (req, res, next) => {
 	try {
 		const newProd: Product = req.body;
