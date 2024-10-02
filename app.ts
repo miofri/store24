@@ -7,6 +7,7 @@ import productsRouter from './routers/products.ts';
 import dotenv from 'dotenv';
 import usersRouter from './routers/users.ts';
 import cartRouter from './routers/cart.ts';
+import orderRouter from './routers/orders.ts';
 
 dotenv.config();
 morgan.token('body', (req: Request) => {
@@ -21,6 +22,7 @@ app.use(
 app.use('/api/products', productsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/order', orderRouter);
 
 app.get('/', (req: any, res: { sendStatus: (arg0: number) => void }) => {
 	res.sendStatus(200);
