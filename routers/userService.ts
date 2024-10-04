@@ -1,25 +1,31 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
+import { Request, Response, NextFunction } from 'express';
 import * as queries from './queries';
+import pool from '../db/db';
 import bcrypt from 'bcrypt';
-import { User, UserId, ChangeEmail, ChangePassword } from './interfaces';
+import { ChangeEmail, ChangePassword, User, UserId } from './interfaces';
 
-const usersRouter = Router();
 const saltRounds = 10;
 
-// will be a protected route later
-
-usersRouter.get('/', async (req, res, next) => {
+export const getAllUsers = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const query = await pool.query('SELECT * FROM users');
 		res.json(query.rows);
 	} catch (error) {
 		next(error);
 	}
-});
-usersRouter.get('/:id', async (req, res, next) => {
+};
+
+export const getUserById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const userId: String = req.params.id;
+		const userId: string = req.params.id;
 		const query = await pool.query('SELECT * FROM users WHERE id = $1', [
 			userId,
 		]);
@@ -27,14 +33,15 @@ usersRouter.get('/:id', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-usersRouter.post('/signup', async (req, res, next) => {
+export const insertNewUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	const newUser: User = req.body;
-	const hashedPassword: String = await bcrypt.hash(
-		newUser.password,
-		saltRounds
-	);
+	const hashedPassword = await bcrypt.hash(newUser.password, saltRounds);
 	try {
 		const emailCheckQuery = await pool.query(
 			'SELECT * FROM users WHERE email = $1',
@@ -43,46 +50,48 @@ usersRouter.post('/signup', async (req, res, next) => {
 		if (emailCheckQuery.rows.length > 0) {
 			return res.status(400).json({ error: 'Email is already in use' });
 		}
-		const query = await pool.query(
-			'INSERT INTO users (first_name, last_name, email, password, home_address, postcode, city, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-			[
-				newUser.first_name,
-				newUser.last_name,
-				newUser.email,
-				hashedPassword,
-				newUser.home_address,
-				newUser.postcode,
-				newUser.city,
-				newUser.country,
-			]
-		);
+		const query = await pool.query(queries.addNewUser, [
+			newUser.first_name,
+			newUser.last_name,
+			newUser.email,
+			hashedPassword,
+			newUser.home_address,
+			newUser.postcode,
+			newUser.city,
+			newUser.country,
+		]);
 		res.status(201).json(query.rows[0]);
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-usersRouter.patch('/update-user-data', async (req, res, next) => {
+export const updateUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const user: UserId = req.body;
-		const query = await pool.query(
-			'UPDATE users SET first_name = $1, last_name = $2, home_address = $3, city = $4, country = $5 WHERE id = $6 RETURNING *',
-			[
-				user.first_name,
-				user.last_name,
-				user.home_address,
-				user.city,
-				user.country,
-				user.id,
-			]
-		);
+		const query = await pool.query(queries.updateUser, [
+			user.first_name,
+			user.last_name,
+			user.home_address,
+			user.city,
+			user.country,
+			user.id,
+		]);
 		res.json(query.rows[0]);
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-usersRouter.patch('/update-email', async (req, res, next) => {
+export const updateEmail = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const user: ChangeEmail = req.body;
 		const query = await pool.query(
@@ -93,9 +102,13 @@ usersRouter.patch('/update-email', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-usersRouter.patch('/update-password', async (req, res, next) => {
+export const updatePasword = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const user: ChangePassword = req.body;
 		const hashedPassword = await bcrypt.hash(user.password, saltRounds);
@@ -107,11 +120,15 @@ usersRouter.patch('/update-password', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-usersRouter.delete('/:id', async (req, res, next) => {
+export const deleteUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const idToDelete: String = req.params.id;
+		const idToDelete: string = req.params.id;
 		const query = await pool.query('DELETE FROM users WHERE id = $1', [
 			idToDelete,
 		]);
@@ -119,6 +136,4 @@ usersRouter.delete('/:id', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
-
-export default usersRouter;
+};

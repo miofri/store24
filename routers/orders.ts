@@ -2,69 +2,11 @@ import { Request, Response, NextFunction, Router } from 'express';
 import pool from '../db/db';
 import * as queries from './queries';
 import { OrderRow, Order } from './interfaces';
+import { createOrder, getOrderByUserId } from './orderService';
 
 const orderRouter = Router();
 
-orderRouter.get('/all-orders/:user_id', async (req, res, next) => {
-	try {
-		const { user_id } = req.params;
-		const query = await pool.query(queries.getOrderByUserId, [user_id]);
-		// building into an arr of obj for easier access in frontend
-		const orders = {};
-		query.rows.forEach((row: OrderRow) => {
-			const order_id = row.order_id!.toString();
-			if (!orders[order_id]) {
-				orders[order_id] = {
-					order_id: row.order_id,
-					status: row.status,
-					total_amount: row.total_amount,
-					created_at: row.created_at,
-					items: [],
-				};
-			}
-			orders[order_id].items.push({
-				order_item_id: row.id,
-				product_id: row.product_id,
-				quantity: row.quantity,
-				price: row.price,
-			});
-		});
-		const result = Object.values(orders);
-		res.json(result);
-	} catch (error) {
-		next(error);
-	}
-});
-
-orderRouter.post('/create-order', async (req, res, next) => {
-	const client = await pool.connect();
-	try {
-		const order: Order = req.body;
-
-		await client.query('BEGIN');
-		const insertOrderQuery = await pool.query<OrderRow>(
-			queries.insertNewOrder,
-			[order.user_id, order.status, order.total_amount]
-		);
-		const order_id: Number = insertOrderQuery.rows[0].id;
-		order.items.forEach(async (item) => {
-			const insertOrderItemQuery = await pool.query<Order>(
-				queries.insertNewOrderItem,
-				[order_id, item.product_id, item.quantity, item.price]
-			);
-		});
-		await client.query('COMMIT');
-		res.sendStatus(201);
-	} catch (error) {
-		await client.query('ROLLBACK');
-		console.error('Error creating order:', error);
-		res.status(500).json({ error: 'Failed to create order' });
-	} finally {
-		client.release();
-	}
-});
-
-// maybe it makes more sense if order is not updateable after being made
-// e.g. to ease delivery. and no deleting order so that there is history or order.
+orderRouter.get('/all-orders/:user_id', getOrderByUserId);
+orderRouter.post('/create-order', createOrder);
 
 export default orderRouter;

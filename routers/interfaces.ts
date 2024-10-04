@@ -10,36 +10,36 @@ export interface AddToCart {
 /* Order */
 /*      */
 export interface BaseOrder {
-	user_id: String;
+	user_id: string;
 	status: 'pending' | 'shipped' | 'delivered' | 'canceled';
 	total_amount: number;
 }
 export interface OrderItem {
-	order_id?: Number;
-	product_id: Number;
-	quantity: Number;
-	price: Number;
+	order_id?: number;
+	product_id: number;
+	quantity: number;
+	price: number;
 }
 export interface Order extends BaseOrder {
 	items: OrderItem[];
 }
 export interface OrderRow extends BaseOrder, OrderItem {
-	id: Number;
-	created_at: String;
+	id: number;
+	created_at: string;
 }
 
 /*      */
 /* Prod */
 /*      */
 export interface Product {
-	sku: String;
-	name: String;
-	category: String;
-	price: Number;
-	inventory: Number;
-	description: String;
-	section: String;
-	images: String[];
+	sku: string;
+	name: string;
+	category: string;
+	price: number;
+	inventory: number;
+	description: string;
+	section: string;
+	images: string[];
 }
 export interface ProductId extends Product {
 	id: string;
@@ -49,23 +49,23 @@ export interface ProductId extends Product {
 /* User */
 /*      */
 export interface User {
-	first_name: String;
-	last_name: String;
-	email: String;
-	password: String;
-	home_address: String;
-	postcode: Number;
-	city: String;
-	country: String;
+	first_name: string;
+	last_name: string;
+	email: string;
+	password: string;
+	home_address: string;
+	postcode: number;
+	city: string;
+	country: string;
 }
 export interface UserId extends User {
-	id: String;
+	id: string;
 }
 export interface ChangePassword {
-	id: String;
-	password: String;
+	id: string;
+	password: string;
 }
 export interface ChangeEmail {
-	id: String;
-	email: String;
+	id: string;
+	email: string;
 }

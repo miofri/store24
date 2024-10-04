@@ -1,22 +1,28 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
+import { Request, Response, NextFunction } from 'express';
 import * as queries from './queries';
+import pool from '../db/db';
 import { Product, ProductId } from './interfaces';
 
-const productsRouter = Router();
-
-productsRouter.get('/', async (req, res, next) => {
+export const getAllProducts = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const query = await pool.query(queries.selectProducts);
 		res.status(200).json(query.rows);
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-productsRouter.get('/search', async (req, res, next) => {
+export const getItemByNameOrSKU = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
-		const term = req.query.q as String;
+		const term = req.query.q as string;
 		if (!term) {
 			return res.status(400).json({ message: 'Search term is required' });
 		}
@@ -28,10 +34,13 @@ productsRouter.get('/search', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-// all route below will be a protected route later
-productsRouter.post('/', async (req, res, next) => {
+export const insertNewProduct = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const newProd: Product = req.body;
 		const query = await pool.query(queries.addNewProduct, [
@@ -48,9 +57,13 @@ productsRouter.post('/', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-productsRouter.patch('/', async (req, res, next) => {
+export const updateProduct = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const patchProd: ProductId = req.body;
 		const query = await pool.query(queries.patchProduct, [
@@ -68,9 +81,13 @@ productsRouter.patch('/', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
+};
 
-productsRouter.delete('/:todelete', async (req, res, next) => {
+export const deleteProduct = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
 	try {
 		const productToDelete: string = req.params.todelete;
 		const query = await pool.query(queries.deleteProduct, [productToDelete]);
@@ -78,6 +95,4 @@ productsRouter.delete('/:todelete', async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-});
-
-export default productsRouter;
+};
