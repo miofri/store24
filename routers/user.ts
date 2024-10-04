@@ -11,7 +11,7 @@ import {
 	updateEmail,
 	updatePasword,
 	updateUser,
-} from './userService';
+} from '../services/userService';
 
 const usersRouter = Router();
 

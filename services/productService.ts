@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import * as queries from './queries';
+import * as queries from '../queries/productQuery';
 import pool from '../db/db';
-import { Product, ProductId } from './interfaces';
+import { Product, ProductId } from '../routers/interfaces';
 
 export const getAllProducts = async (
 	req: Request,
@@ -26,10 +26,10 @@ export const getItemByNameOrSKU = async (
 		if (!term) {
 			return res.status(400).json({ message: 'Search term is required' });
 		}
-		const query = await pool.query(
-			"SELECT * FROM products WHERE sku = $1 OR name ILIKE '%' || $2 || '%'",
-			[term, term]
-		);
+		const query = await pool.query(queries.selectProductByNameOrSKU, [
+			term,
+			term,
+		]);
 		res.status(200).json(query.rows);
 	} catch (error) {
 		next(error);

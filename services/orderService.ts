@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import * as queries from './queries';
+import * as queries from '../queries/orderQuery';
 import pool from '../db/db';
-import { Order, OrderRow } from './interfaces';
+import { Order, OrderRow } from '../routers/interfaces';
 
 export const getOrderByUserId = async (
 	req: Request,

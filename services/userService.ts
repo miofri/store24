@@ -1,8 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import * as queries from './queries';
+import * as queries from '../queries/userQuery';
 import pool from '../db/db';
 import bcrypt from 'bcrypt';
-import { ChangeEmail, ChangePassword, User, UserId } from './interfaces';
+import {
+	ChangeEmail,
+	ChangePassword,
+	User,
+	UserId,
+} from '../routers/interfaces';
 
 const saltRounds = 10;
 
@@ -12,7 +17,7 @@ export const getAllUsers = async (
 	next: NextFunction
 ) => {
 	try {
-		const query = await pool.query('SELECT * FROM users');
+		const query = await pool.query(queries.selectAllUsers);
 		res.json(query.rows);
 	} catch (error) {
 		next(error);
@@ -26,9 +31,7 @@ export const getUserById = async (
 ) => {
 	try {
 		const userId: string = req.params.id;
-		const query = await pool.query('SELECT * FROM users WHERE id = $1', [
-			userId,
-		]);
+		const query = await pool.query(queries.selectUserById, [userId]);
 		res.json(query.rows[0]);
 	} catch (error) {
 		next(error);
@@ -43,10 +46,9 @@ export const insertNewUser = async (
 	const newUser: User = req.body;
 	const hashedPassword = await bcrypt.hash(newUser.password, saltRounds);
 	try {
-		const emailCheckQuery = await pool.query(
-			'SELECT * FROM users WHERE email = $1',
-			[newUser.email]
-		);
+		const emailCheckQuery = await pool.query(queries.selectUserByEmail, [
+			newUser.email,
+		]);
 		if (emailCheckQuery.rows.length > 0) {
 			return res.status(400).json({ error: 'Email is already in use' });
 		}
@@ -94,10 +96,7 @@ export const updateEmail = async (
 ) => {
 	try {
 		const user: ChangeEmail = req.body;
-		const query = await pool.query(
-			'UPDATE users SET email = $1 WHERE id = $2 RETURNING *',
-			[user.email, user.id]
-		);
+		const query = await pool.query(queries.updateEmail, [user.email, user.id]);
 		res.status(200).json(query.rows[0]);
 	} catch (error) {
 		next(error);
@@ -112,10 +111,10 @@ export const updatePasword = async (
 	try {
 		const user: ChangePassword = req.body;
 		const hashedPassword = await bcrypt.hash(user.password, saltRounds);
-		const query = await pool.query(
-			'UPDATE users SET password = $1 WHERE id = $2 RETURNING *',
-			[hashedPassword, user.id]
-		);
+		const query = await pool.query(queries.updatePassword, [
+			hashedPassword,
+			user.id,
+		]);
 		res.status(200).json(query.rows[0]);
 	} catch (error) {
 		next(error);
@@ -129,9 +128,7 @@ export const deleteUser = async (
 ) => {
 	try {
 		const idToDelete: string = req.params.id;
-		const query = await pool.query('DELETE FROM users WHERE id = $1', [
-			idToDelete,
-		]);
+		const query = await pool.query(queries.deleteUser, [idToDelete]);
 		res.sendStatus(204);
 	} catch (error) {
 		next(error);
