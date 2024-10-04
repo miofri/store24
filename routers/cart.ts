@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express';
 import pool from '../db/db';
 import * as queries from './queries';
+import { AddToCart } from './interfaces';
 
 const cartRouter = Router();
-
-interface AddToCart {
-	user_id: string;
-	product_id: number;
-}
 
 cartRouter.get('/:userid', async (req, res, next) => {
 	try {
@@ -63,12 +59,12 @@ cartRouter.post('/add-to-cart', async (req, res, next) => {
 cartRouter.post('/reduce-from-cart', async (req, res, next) => {
 	try {
 		const { user_id, product_id }: AddToCart = req.body;
+		pool.query('BEGIN    ');
 		const cartExistCheck = await pool.query(
 			'SELECT * FROM cart WHERE user_id = $1',
 			[user_id]
 		);
 		let cartId: Number;
-
 		if (cartExistCheck.rowCount === 0) {
 			const addCart = await pool.query(
 				'INSERT INTO cart (user_id) VALUES ($1) RETURNING id',
@@ -82,7 +78,6 @@ cartRouter.post('/reduce-from-cart', async (req, res, next) => {
 			'SELECT * FROM cartitems WHERE cart_id = $1 AND product_id = $2',
 			[cartId, product_id]
 		);
-
 		if (checkIfCartItemExist.rows.length > 0) {
 			if (checkIfCartItemExist.rows[0].quantity === 1) {
 				const deleteCartItem = await pool.query(
@@ -116,8 +111,6 @@ cartRouter.delete('/clearcart/:user_id', async (req, res, next) => {
 				.status(400)
 				.json({ message: 'Cart is already empty or does not exist.' });
 		}
-		console.log(findCartId.rows);
-
 		const deleteQuery = await pool.query(
 			'DELETE FROM cartitems WHERE cart_id = $1',
 			[findCartId.rows[0].id]
@@ -138,7 +131,6 @@ cartRouter.delete('/remove-item', async (req, res, next) => {
 		if (findCartId.rows.length === 0) {
 			res.status(404).json({ error: 'Item does not exist' });
 		}
-
 		const deleteItemFromCart = await pool.query(
 			'DELETE FROM cartitems WHERE cart_id = $1 AND product_id = $2',
 			[findCartId.rows[0].id, product_id]

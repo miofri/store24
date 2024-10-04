@@ -2,31 +2,11 @@ import { Request, Response, NextFunction, Router } from 'express';
 import pool from '../db/db';
 import * as queries from './queries';
 import bcrypt from 'bcrypt';
+import { User, UserId, ChangeEmail, ChangePassword } from './interfaces';
 
 const usersRouter = Router();
 const saltRounds = 10;
 
-interface User {
-	first_name: String;
-	last_name: String;
-	email: String;
-	password: String;
-	home_address: String;
-	postcode: Number;
-	city: String;
-	country: String;
-}
-interface UserId extends User {
-	id: String;
-}
-interface ChangePassword {
-	id: String;
-	password: String;
-}
-interface ChangeEmail {
-	id: String;
-	email: String;
-}
 // will be a protected route later
 
 usersRouter.get('/', async (req, res, next) => {

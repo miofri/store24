@@ -1,22 +1,9 @@
 import { Request, Response, NextFunction, Router } from 'express';
 import pool from '../db/db';
 import * as queries from './queries';
+import { Product, ProductId } from './interfaces';
 
 const productsRouter = Router();
-
-interface Product {
-	sku: String;
-	name: String;
-	category: String;
-	price: Number;
-	inventory: Number;
-	description: String;
-	section: String;
-	images: String[];
-}
-interface ProductId extends Product {
-	id: string;
-}
 
 productsRouter.get('/', async (req, res, next) => {
 	try {
