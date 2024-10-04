@@ -1,8 +1,4 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
-import * as queries from './queries';
-import bcrypt from 'bcrypt';
-import { User, UserId, ChangeEmail, ChangePassword } from './interfaces';
+import { Router } from 'express';
 import {
 	deleteUser,
 	getAllUsers,

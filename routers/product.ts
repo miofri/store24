@@ -1,14 +1,11 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
-import * as queries from './queries';
-import { Product, ProductId } from './interfaces';
+import { Router } from 'express';
 import {
 	deleteProduct,
 	getAllProducts,
 	getItemByNameOrSKU,
 	insertNewProduct,
 	updateProduct,
-} from './productService';
+} from '../services/productService';
 
 const productsRouter = Router();
 

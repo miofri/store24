@@ -1,14 +1,12 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
-import * as queries from './queries';
-import { AddToCart } from './interfaces';
+import { Router } from 'express';
+
 import {
 	addToCart,
 	clearCart,
 	getCartByUserId,
 	reduceFromCart,
 	removeItemFromCart,
-} from './cartService';
+} from '../services/cartService';
 
 const cartRouter = Router();
 

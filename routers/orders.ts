@@ -1,8 +1,5 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import pool from '../db/db';
-import * as queries from './queries';
-import { OrderRow, Order } from './interfaces';
-import { createOrder, getOrderByUserId } from './orderService';
+import { Router } from 'express';
+import { createOrder, getOrderByUserId } from '../services/orderService';
 
 const orderRouter = Router();
 

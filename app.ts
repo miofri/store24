@@ -2,10 +2,10 @@ import express, { Request } from 'express';
 const app = express();
 import cors from 'cors';
 import morgan from 'morgan';
-import productsRouter from './routers/products.ts';
+import productsRouter from './routers/product.ts';
 //const path = require('path');
 import dotenv from 'dotenv';
-import usersRouter from './routers/users.ts';
+import usersRouter from './routers/user.ts';
 import cartRouter from './routers/cart.ts';
 import orderRouter from './routers/orders.ts';
 
