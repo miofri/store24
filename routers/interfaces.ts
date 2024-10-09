@@ -61,6 +61,9 @@ export interface User {
 export interface UserId extends User {
 	id: string;
 }
+export interface UserWithoutPassword extends Omit<User, 'password'> {
+	id: string;
+}
 export interface ChangePassword {
 	id: string;
 	password: string;
