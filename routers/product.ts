@@ -11,7 +11,7 @@ const productsRouter = Router();
 
 productsRouter.get('/', getAllProducts);
 productsRouter.get('/search', getItemByNameOrSKU);
-// all route below will be a protected route later
+// all route below will be a protected ADMIN ONLY route later
 productsRouter.post('/', insertNewProduct);
 productsRouter.patch('/', updateProduct);
 productsRouter.delete('/:todelete', deleteProduct);

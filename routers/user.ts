@@ -8,17 +8,18 @@ import {
 	updatePasword,
 	updateUser,
 } from '../services/userService';
+import headerCheckMiddlware from '../services/headerCheckMiddleware';
 
 const usersRouter = Router();
 
-// will be a protected route later
-
-usersRouter.get('/', getAllUsers);
-usersRouter.get('/:id', getUserById);
 usersRouter.post('/signup', insertNewUser);
-usersRouter.patch('/update-user-data', updateUser);
-usersRouter.patch('/update-email', updateEmail);
-usersRouter.patch('/update-password', updatePasword);
-usersRouter.delete('/:id', deleteUser);
+
+usersRouter.use(headerCheckMiddlware);
+usersRouter.get('/', getAllUsers); // admin only later
+usersRouter.get('/:id', getUserById); // account owner only/admin
+usersRouter.patch('/update-user-data', updateUser); // account owner only/admin
+usersRouter.patch('/update-email', updateEmail); // account owner only/admin
+usersRouter.patch('/update-password', updatePasword); // account owner only/admin
+usersRouter.delete('/:id', deleteUser); // account owner only/admin
 
 export default usersRouter;
