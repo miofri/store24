@@ -38,9 +38,10 @@ const auth_middleware = async (
 			.status(401)
 			.json({ message: 'Login failed - wrong credentials' });
 	}
-	const UserWithoutPassword: UserWithoutPassword = {
+	const userWithoutPassword: UserWithoutPassword = {
 		...found.rows[0],
 	};
+	req.user = userWithoutPassword;
 	next();
 };
 

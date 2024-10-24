@@ -9,13 +9,17 @@ export const authenticateUser = async (
 	res: Response,
 	next: NextFunction
 ) => {
-	const token = jwt.sign(
-		{
-			email: req.user?.email,
-			id: req.user?.id,
-		},
-		JWT_KEY,
-		{ expiresIn: '7d' }
-	);
-	res.json({ token: token, user: req.user });
+	try {
+		const token = jwt.sign(
+			{
+				email: req.user?.email,
+				id: req.user?.id,
+			},
+			JWT_KEY,
+			{ expiresIn: '7d' }
+		);
+		res.json({ token: token, user: req.user });
+	} catch (error) {
+		next(error);
+	}
 };

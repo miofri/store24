@@ -10,15 +10,18 @@ const headerCheckMiddlware = async (
 	res: Response,
 	next: NextFunction
 ) => {
-	if (!req.headers['Authorization']) {
+	if (!req.headers['authorization']) {
 		return res.status(401).json({ message: 'Token not found' });
 	}
-	const authHeader = req.headers['Authorization'] as string;
-	const getToken = authHeader.split(' ')[1];
+	const getToken = req.headers['authorization'] as string;
+	console.log(getToken);
+
 	const jwtSecretKey = process.env.JWT_SECRET_KEY!;
 
 	try {
 		const decodedToken = jwt.verify(getToken, jwtSecretKey);
+		console.log(decodedToken);
+
 		if (typeof decodedToken === 'object' && decodedToken !== null) {
 			const { email, id } = decodedToken as JwtPayload & {
 				email?: string;

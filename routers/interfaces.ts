@@ -63,6 +63,10 @@ export interface UserId extends User {
 }
 export interface UserWithoutPassword extends Omit<User, 'password'> {
 	id: string;
+	isAdmin: boolean;
+}
+export interface AdminWithoutPassword extends Omit<User, 'password'> {
+	id: string;
 }
 export interface ChangePassword {
 	id: string;
