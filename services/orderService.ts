@@ -70,5 +70,7 @@ export const createOrder = async (
 	}
 };
 
+//need to create a route for fetching all orders for admin dash
+
 // maybe it makes more sense if order is not updateable after being made
 // e.g. to ease delivery. and no deleting order so that there is history or order.

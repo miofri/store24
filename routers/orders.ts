@@ -8,4 +8,6 @@ orderRouter.use(headerCheckMiddlware);
 orderRouter.get('/all-orders/:user_id', getOrderByUserId);
 orderRouter.post('/create-order', createOrder);
 
+//need to create a route for fetching all orders for admin dash
+
 export default orderRouter;
