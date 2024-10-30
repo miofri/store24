@@ -17,7 +17,6 @@ productsRouter.get('/search', getItemByNameOrSKU);
 //admin only
 productsRouter.use(headerCheckMiddlware);
 productsRouter.use(adminCheckMiddlware);
-
 productsRouter.post('/', insertNewProduct);
 productsRouter.patch('/', updateProduct);
 productsRouter.delete('/:todelete', deleteProduct);

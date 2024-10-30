@@ -13,7 +13,7 @@ export interface AuthRequest extends Request {
 	body: Login;
 }
 
-const auth_middleware = async (
+const authMiddleware = async (
 	req: AuthRequest,
 	res: Response,
 	next: NextFunction
@@ -45,4 +45,4 @@ const auth_middleware = async (
 	next();
 };
 
-export default auth_middleware;
+export default authMiddleware;

@@ -22,6 +22,7 @@ usersRouter.patch('/update-email', updateEmail); // account owner only/admin
 usersRouter.patch('/update-password', updatePasword); // account owner only/admin
 usersRouter.delete('/:id', deleteUser); // account owner only/admin
 
+//admin only
 usersRouter.use(adminCheckMiddlware);
 usersRouter.get('/', getAllUsers); // admin only later
 
