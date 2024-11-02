@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
+//header
 interface HeaderCheck extends Request {
 	user?: { email: string; id: string };
 }
@@ -13,8 +14,8 @@ const headerCheckMiddlware = async (
 	if (!req.headers['authorization']) {
 		return res.status(401).json({ message: 'Token not found' });
 	}
-	const getToken = req.headers['authorization'] as string;
-	console.log(getToken);
+	const authToken = req.headers['authorization'] as string;
+	const getToken = authToken.split(' ')[1];
 
 	const jwtSecretKey = process.env.JWT_SECRET_KEY!;
 

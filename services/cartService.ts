@@ -11,6 +11,11 @@ export const getCartByUserId = async (
 	try {
 		const { userid } = req.params;
 		const query = await pool.query(queries.getCartByUserId, [userid]);
+		if (query.rows.length === 1 && query.rows[0].id === null) {
+			return res.json({ message: 'cart not found' });
+
+			88;
+		}
 		res.json(query.rows);
 	} catch (error) {
 		next(error);
@@ -23,12 +28,13 @@ export const addToCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { user_id, product_id }: AddToCart = req.body;
-		const cartExistCheck = await pool.query(queries.cartExistCheck, [user_id]);
+		const { userid } = req.params;
+		const { product_id }: AddToCart = req.body;
+		const cartExistCheck = await pool.query(queries.cartExistCheck, [userid]);
 		let cartId: number;
 
 		if (cartExistCheck.rowCount === 0) {
-			const addCart = await pool.query(queries.addToCart, [user_id]);
+			const addCart = await pool.query(queries.addToCart, [userid]);
 			cartId = addCart.rows[0].id;
 		} else {
 			cartId = cartExistCheck.rows[0].id;
@@ -64,12 +70,13 @@ export const reduceFromCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { user_id, product_id }: AddToCart = req.body;
+		const { userid } = req.params;
+		const { product_id }: AddToCart = req.body;
 		pool.query('BEGIN    ');
-		const cartExistCheck = await pool.query(queries.cartExistCheck, [user_id]);
+		const cartExistCheck = await pool.query(queries.cartExistCheck, [userid]);
 		let cartId: number;
 		if (cartExistCheck.rowCount === 0) {
-			const addCart = await pool.query(queries.insertNewCart, [user_id]);
+			const addCart = await pool.query(queries.insertNewCart, [userid]);
 			cartId = addCart.rows[0].id;
 		} else {
 			cartId = cartExistCheck.rows[0].id;
@@ -106,8 +113,8 @@ export const clearCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { user_id } = req.params;
-		const findCartId = await pool.query(queries.cartExistCheck, [user_id]);
+		const { userid } = req.params;
+		const findCartId = await pool.query(queries.cartExistCheck, [userid]);
 		if (findCartId.rows.length === 0) {
 			return res
 				.status(400)
@@ -128,8 +135,9 @@ export const removeItemFromCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { user_id, product_id } = req.body;
-		const findCartId = await pool.query(queries.cartExistCheck, [user_id]);
+		const { userid } = req.params;
+		const { product_id } = req.body;
+		const findCartId = await pool.query(queries.cartExistCheck, [userid]);
 		if (findCartId.rows.length === 0) {
 			res.status(404).json({ error: 'Item does not exist' });
 		}

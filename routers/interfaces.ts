@@ -2,7 +2,6 @@
 /* Cart */
 /*      */
 export interface AddToCart {
-	user_id: string;
 	product_id: number;
 }
 
@@ -71,4 +70,9 @@ export interface ChangePassword {
 export interface ChangeEmail {
 	id: string;
 	email: string;
+}
+
+//header
+export interface HeaderCheck extends Request {
+	user?: { email: string; id: string };
 }
