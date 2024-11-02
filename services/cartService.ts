@@ -13,8 +13,6 @@ export const getCartByUserId = async (
 		const query = await pool.query(queries.getCartByUserId, [userid]);
 		if (query.rows.length === 1 && query.rows[0].id === null) {
 			return res.json({ message: 'cart not found' });
-
-			88;
 		}
 		res.json(query.rows);
 	} catch (error) {
