@@ -11,33 +11,6 @@ import {
 
 const saltRounds = 10;
 
-export const getAllUsers = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	try {
-		const query = await pool.query(queries.selectAllUsers);
-		res.json(query.rows);
-	} catch (error) {
-		next(error);
-	}
-};
-
-export const getUserById = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	try {
-		const userId: string = req.params.id;
-		const query = await pool.query(queries.selectUserById, [userId]);
-		res.json(query.rows[0]);
-	} catch (error) {
-		next(error);
-	}
-};
-
 export const insertNewUser = async (
 	req: Request,
 	res: Response,
@@ -68,7 +41,34 @@ export const insertNewUser = async (
 	}
 };
 
-export const updateUser = async (
+export const getAllUsers = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const query = await pool.query(queries.selectAllUsers);
+		res.json(query.rows);
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getUserById = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const userId: string = req.params.userid;
+		const query = await pool.query(queries.selectUserById, [userId]);
+		res.json(query.rows[0]);
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const updateUserData = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -81,7 +81,7 @@ export const updateUser = async (
 			user.home_address,
 			user.city,
 			user.country,
-			user.id,
+			user.userid,
 		]);
 		res.json(query.rows[0]);
 	} catch (error) {
@@ -96,7 +96,10 @@ export const updateEmail = async (
 ) => {
 	try {
 		const user: ChangeEmail = req.body;
-		const query = await pool.query(queries.updateEmail, [user.email, user.id]);
+		const query = await pool.query(queries.updateEmail, [
+			user.email,
+			user.userid,
+		]);
 		res.status(200).json(query.rows[0]);
 	} catch (error) {
 		next(error);
@@ -113,7 +116,7 @@ export const updatePasword = async (
 		const hashedPassword = await bcrypt.hash(user.password, saltRounds);
 		const query = await pool.query(queries.updatePassword, [
 			hashedPassword,
-			user.id,
+			user.userid,
 		]);
 		res.status(200).json(query.rows[0]);
 	} catch (error) {

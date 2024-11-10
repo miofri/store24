@@ -9,7 +9,6 @@ export interface AddToCart {
 /* Order */
 /*      */
 export interface BaseOrder {
-	user_id: string;
 	status: 'pending' | 'shipped' | 'delivered' | 'canceled';
 	total_amount: number;
 }
@@ -58,21 +57,21 @@ export interface User {
 	country: string;
 }
 export interface UserId extends User {
-	id: string;
+	userid: string;
 }
 export interface UserWithoutPassword extends Omit<User, 'password'> {
-	id: string;
+	userid: string;
 }
 export interface ChangePassword {
-	id: string;
+	userid: string;
 	password: string;
 }
 export interface ChangeEmail {
-	id: string;
+	userid: string;
 	email: string;
 }
 
 //header
 export interface HeaderCheck extends Request {
-	user?: { email: string; id: string };
+	user?: { email: string; userid: string };
 }

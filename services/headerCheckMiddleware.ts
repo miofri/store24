@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 
 //header
 interface HeaderCheck extends Request {
-	user?: { email: string; id: string };
+	user?: { email: string; userid: string };
 }
 
 const headerCheckMiddlware = async (
@@ -24,12 +24,12 @@ const headerCheckMiddlware = async (
 		console.log(decodedToken);
 
 		if (typeof decodedToken === 'object' && decodedToken !== null) {
-			const { email, id } = decodedToken as JwtPayload & {
+			const { email, userid } = decodedToken as JwtPayload & {
 				email?: string;
-				id?: string;
+				userid?: string;
 			};
-			if (email && id) {
-				req.user = { email, id };
+			if (email && userid) {
+				req.user = { email, userid };
 				next();
 			} else {
 				return res.status(403).json({ message: 'Invalid token payload' });

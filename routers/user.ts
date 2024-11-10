@@ -6,21 +6,22 @@ import {
 	insertNewUser,
 	updateEmail,
 	updatePasword,
-	updateUser,
+	updateUserData,
 } from '../services/userService';
 import headerCheckMiddlware from '../services/headerCheckMiddleware';
 import adminCheckMiddlware from '../services/adminCheckMiddleware';
+import isAdminOrUserMiddleware from '../services/isAdminOrUserMiddleware';
 
 const usersRouter = Router();
 
 usersRouter.post('/signup', insertNewUser);
 
 usersRouter.use(headerCheckMiddlware);
-usersRouter.get('/:id', getUserById); // account owner only/admin
-usersRouter.patch('/update-user-data', updateUser); // account owner only/admin
-usersRouter.patch('/update-email', updateEmail); // account owner only/admin
-usersRouter.patch('/update-password', updatePasword); // account owner only/admin
-usersRouter.delete('/:id', deleteUser); // account owner only/admin
+usersRouter.get('/:userid', isAdminOrUserMiddleware, getUserById);
+usersRouter.patch('/update-user-data', isAdminOrUserMiddleware, updateUserData);
+usersRouter.patch('/update-email', isAdminOrUserMiddleware, updateEmail);
+usersRouter.patch('/update-password', isAdminOrUserMiddleware, updatePasword);
+usersRouter.delete('/:id', isAdminOrUserMiddleware, deleteUser);
 
 //admin only
 usersRouter.use(adminCheckMiddlware);

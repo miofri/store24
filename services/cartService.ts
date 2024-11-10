@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as queries from '../queries/cartQuery';
 import pool from '../db/db';
-import { AddToCart } from '../routers/interfaces';
+import { AddToCart, HeaderCheck } from '../routers/interfaces';
 
 export const getCartByUserId = async (
 	req: Request,
@@ -9,7 +9,7 @@ export const getCartByUserId = async (
 	next: NextFunction
 ) => {
 	try {
-		const { userid } = req.params;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 		const query = await pool.query(queries.getCartByUserId, [userid]);
 		if (query.rows.length === 1 && query.rows[0].id === null) {
 			return res.json({ message: 'cart not found' });
@@ -26,7 +26,7 @@ export const addToCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { userid } = req.params;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 		const { product_id }: AddToCart = req.body;
 		const cartExistCheck = await pool.query(queries.cartExistCheck, [userid]);
 		let cartId: number;
@@ -68,7 +68,7 @@ export const reduceFromCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { userid } = req.params;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 		const { product_id }: AddToCart = req.body;
 		pool.query('BEGIN    ');
 		const cartExistCheck = await pool.query(queries.cartExistCheck, [userid]);
@@ -111,7 +111,7 @@ export const clearCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { userid } = req.params;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 		const findCartId = await pool.query(queries.cartExistCheck, [userid]);
 		if (findCartId.rows.length === 0) {
 			return res
@@ -133,7 +133,7 @@ export const removeItemFromCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { userid } = req.params;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 		const { product_id } = req.body;
 		const findCartId = await pool.query(queries.cartExistCheck, [userid]);
 		if (findCartId.rows.length === 0) {

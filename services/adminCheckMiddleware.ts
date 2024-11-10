@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface HeaderCheck extends Request {
-	user?: { email: string; id: string };
+	user?: { email: string; userid: string };
 }
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || [];

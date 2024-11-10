@@ -13,7 +13,7 @@ export const authenticateUser = async (
 		const token = jwt.sign(
 			{
 				email: req.user?.email,
-				id: req.user?.id,
+				userid: req.user?.userid,
 			},
 			JWT_KEY,
 			{ expiresIn: '7d' }

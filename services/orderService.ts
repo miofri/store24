@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as queries from '../queries/orderQuery';
 import pool from '../db/db';
-import { Order, OrderRow } from '../routers/interfaces';
+import { HeaderCheck, Order, OrderRow } from '../routers/interfaces';
 
 export const getOrderByUserId = async (
 	req: Request,
@@ -9,8 +9,8 @@ export const getOrderByUserId = async (
 	next: NextFunction
 ) => {
 	try {
-		const { user_id } = req.params;
-		const query = await pool.query(queries.getOrderByUserId, [user_id]);
+		const userid = (req as unknown as HeaderCheck).user?.userid;
+		const query = await pool.query(queries.getOrderByUserId, [userid]);
 		// building into an arr of obj for easier access in frontend
 		const orders = {};
 		query.rows.forEach((row: OrderRow) => {
@@ -46,11 +46,12 @@ export const createOrder = async (
 	const client = await pool.connect();
 	try {
 		const order: Order = req.body;
+		const userid = (req as unknown as HeaderCheck).user?.userid;
 
 		await client.query('BEGIN');
 		const insertOrderQuery = await pool.query<OrderRow>(
 			queries.insertNewOrder,
-			[order.user_id, order.status, order.total_amount]
+			[userid, order.status, order.total_amount]
 		);
 		const order_id: number = insertOrderQuery.rows[0].id;
 		order.items.forEach(async (item) => {
