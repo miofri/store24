@@ -2,12 +2,12 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 //header
-interface HeaderCheck extends Request {
-	user?: { email: string; userid: string };
-}
+//interface HeaderCheck extends Request {
+//	user?: { email: string; userid: string };
+//}
 
 const headerCheckMiddlware = async (
-	req: HeaderCheck,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
@@ -28,6 +28,8 @@ const headerCheckMiddlware = async (
 				email?: string;
 				userid?: string;
 			};
+			console.log(email, userid);
+
 			if (email && userid) {
 				req.user = { email, userid };
 				next();

@@ -4,13 +4,8 @@ import pool from '../db/db';
 import bcrypt from 'bcrypt';
 import { UserWithoutPassword } from '../routers/interfaces';
 
-interface Login {
-	email: string;
-	password: string;
-}
 export interface AuthRequest extends Request {
-	user?: UserWithoutPassword;
-	body: Login;
+	body: { email: string; password: string };
 }
 
 const authMiddleware = async (
@@ -38,10 +33,19 @@ const authMiddleware = async (
 			.status(401)
 			.json({ message: 'Login failed - wrong credentials' });
 	}
-	const userWithoutPassword: UserWithoutPassword = {
+	const userWithoutPassword = {
 		...found.rows[0],
 	};
-	req.user = userWithoutPassword;
+
+	req.user_data = {
+		...userWithoutPassword,
+		userid: userWithoutPassword.id,
+	};
+	req.user = {
+		email: req.user_data!.email,
+		userid: req.user_data!.userid,
+	};
+
 	next();
 };
 

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as queries from '../queries/orderQuery';
 import pool from '../db/db';
-import { HeaderCheck, Order, OrderRow } from '../routers/interfaces';
+import { HeaderCheck, Order, OrderItem, OrderRow } from '../routers/interfaces';
 
 export const getOrderByUserId = async (
 	req: Request,
@@ -9,10 +9,10 @@ export const getOrderByUserId = async (
 	next: NextFunction
 ) => {
 	try {
-		const userid = (req as unknown as HeaderCheck).user?.userid;
+		const userid = req.user?.userid;
 		const query = await pool.query(queries.getOrderByUserId, [userid]);
 		// building into an arr of obj for easier access in frontend
-		const orders = {};
+		const orders: { [key: string]: Order } = {};
 		query.rows.forEach((row: OrderRow) => {
 			const order_id = row.order_id!.toString();
 			if (!orders[order_id]) {
@@ -25,7 +25,6 @@ export const getOrderByUserId = async (
 				};
 			}
 			orders[order_id].items.push({
-				order_item_id: row.id,
 				product_id: row.product_id,
 				quantity: row.quantity,
 				price: row.price,
@@ -46,14 +45,14 @@ export const createOrder = async (
 	const client = await pool.connect();
 	try {
 		const order: Order = req.body;
-		const userid = (req as unknown as HeaderCheck).user?.userid;
+		const userid = req.user?.userid;
 
 		await client.query('BEGIN');
 		const insertOrderQuery = await pool.query<OrderRow>(
 			queries.insertNewOrder,
 			[userid, order.status, order.total_amount]
 		);
-		const order_id: number = insertOrderQuery.rows[0].id;
+		const order_id: number = insertOrderQuery.rows[0].order_id;
 		order.items.forEach(async (item) => {
 			const insertOrderItemQuery = await pool.query<Order>(
 				queries.insertNewOrderItem,

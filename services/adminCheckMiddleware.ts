@@ -3,14 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-interface HeaderCheck extends Request {
-	user?: { email: string; userid: string };
-}
+//interface HeaderCheck extends Request {
+//	user?: { email: string; userid: string };
+//}
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || [];
 
 const adminCheckMiddlware = async (
-	req: HeaderCheck,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {

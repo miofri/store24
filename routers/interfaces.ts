@@ -11,9 +11,11 @@ export interface AddToCart {
 export interface BaseOrder {
 	status: 'pending' | 'shipped' | 'delivered' | 'canceled';
 	total_amount: number;
+	items: OrderItem[];
+	created_at: string;
+	order_id: number;
 }
 export interface OrderItem {
-	order_id?: number;
 	product_id: number;
 	quantity: number;
 	price: number;
@@ -21,10 +23,7 @@ export interface OrderItem {
 export interface Order extends BaseOrder {
 	items: OrderItem[];
 }
-export interface OrderRow extends BaseOrder, OrderItem {
-	id: number;
-	created_at: string;
-}
+export interface OrderRow extends BaseOrder, OrderItem {}
 
 /*      */
 /* Prod */
