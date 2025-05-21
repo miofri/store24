@@ -45,7 +45,7 @@ export const addToCart = async (
 		);
 
 		if (checkIfCartItemExist.rows.length > 0) {
-			const updateCartItem = await pool.query(queries.updateCartItem, [
+			const updateCartItem = await pool.query(queries.addItemQuantity, [
 				1,
 				cartId,
 				product_id,
@@ -72,6 +72,7 @@ export const reduceFromCart = async (
 	try {
 		const userid = req.user?.userid;
 		const { product_id }: AddToCart = req.body;
+
 		pool.query('BEGIN    ');
 		const cartExistCheck = await pool.query(queries.cartExistCheck, [userid]);
 		let cartId: number;
@@ -93,7 +94,7 @@ export const reduceFromCart = async (
 				]);
 				res.sendStatus(404);
 			}
-			const updateCartItem = await pool.query(queries.updateCartItem, [
+			const updateCartItem = await pool.query(queries.reduceItemQuantity, [
 				1,
 				cartId,
 				product_id,

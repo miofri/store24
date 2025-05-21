@@ -2,13 +2,13 @@ import express, { Request } from 'express';
 const app = express();
 import cors from 'cors';
 import morgan from 'morgan';
-import productsRouter from './routers/product.ts';
+import productsRouter from './routers/product';
 //const path = require('path');
 import dotenv from 'dotenv';
-import usersRouter from './routers/user.ts';
-import cartRouter from './routers/cart.ts';
-import orderRouter from './routers/orders.ts';
-import authRouter from './routers/auth.ts';
+import usersRouter from './routers/user';
+import cartRouter from './routers/cart';
+import orderRouter from './routers/orders';
+import authRouter from './routers/auth';
 
 dotenv.config();
 morgan.token('body', (req: Request) => {

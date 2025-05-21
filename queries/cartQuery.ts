@@ -12,12 +12,14 @@ const clearCart = 'DELETE FROM cartitems WHERE cart_id = $1';
 const deleteCartItem =
 	'DELETE FROM cartitems WHERE cart_id = $1 AND product_id =$2';
 
-const updateCartItem =
+const addItemQuantity =
+	'UPDATE cartitems SET quantity = quantity + $1 WHERE cart_id = $2 AND product_id = $3 RETURNING *';
+const reduceItemQuantity =
 	'UPDATE cartitems SET quantity = quantity - $1 WHERE cart_id = $2 AND product_id = $3 RETURNING *';
 
 export {
 	getCartByUserId,
-	updateCartItem,
+	reduceItemQuantity,
 	cartExistCheck,
 	addToCart,
 	checkIfCartItemExist,
@@ -25,4 +27,5 @@ export {
 	insertNewCart,
 	deleteCartItem,
 	clearCart,
+	addItemQuantity,
 };
